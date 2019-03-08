@@ -1,13 +1,22 @@
 package com.example.nas19_journal;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,31 +31,60 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                createJournalEntry();
             }
         });
+
+        setAdapter();
+        setOnClickListeners();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        setAdapter();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private class EntryClickListener implements ListView.OnItemClickListener {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Cursor e = (Cursor) parent.getItemAtPosition(position);
+            Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+            intent.putExtra("entry", new JournalEntry(
+                    e.getInt(e.getColumnIndex(EntryDatabase.COLUMN_ID)),
+                    e.getInt(e.getColumnIndex(EntryDatabase.COLUMN_MOOD)),
+                    e.getString(e.getColumnIndex(EntryDatabase.COLUMN_TITLE)),
+                    e.getString(e.getColumnIndex(EntryDatabase.COLUMN_CONTENT)),
+                    e.getString(e.getColumnIndex(EntryDatabase.COLUMN_TIMESTAMP)))
+            );
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
+    private class EntryLongClickListener implements ListView.OnItemLongClickListener {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            EntryDatabase db = EntryDatabase.getInstance(getApplicationContext());
+            Cursor entry = (Cursor) parent.getItemAtPosition(position);
+            db.delete(entry.getInt(entry.getColumnIndex(EntryDatabase.COLUMN_ID)));
+            return false;
+        }
+    }
+
+    public void createJournalEntry() {
+        Intent intent = new Intent(this, InputActivity.class);
+        startActivityForResult(intent, 1);
+    }
+
+    public void setAdapter () {
+        EntryDatabase db = EntryDatabase.getInstance(getApplicationContext());
+        ((ListView)findViewById(R.id.entriesList)).setAdapter(new EntryAdapter(this, db.selectAll()));
+    }
+
+    public void setOnClickListeners() {
+        ListView view = findViewById(R.id.entriesList);
+        view.setOnItemLongClickListener(new EntryLongClickListener());
+        view.setOnItemClickListener(new EntryClickListener());
+    }
+
 }
