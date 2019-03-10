@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
                     e.getString(e.getColumnIndex(EntryDatabase.COLUMN_CONTENT)),
                     e.getString(e.getColumnIndex(EntryDatabase.COLUMN_TIMESTAMP)))
             );
+            startActivityForResult(intent, 2);
         }
     }
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             EntryDatabase db = EntryDatabase.getInstance(getApplicationContext());
             Cursor entry = (Cursor) parent.getItemAtPosition(position);
             db.delete(entry.getInt(entry.getColumnIndex(EntryDatabase.COLUMN_ID)));
+            setAdapter();
             return false;
         }
     }
