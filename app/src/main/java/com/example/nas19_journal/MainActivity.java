@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
+    /** When activity is created, set onclicklistener for the action button. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,16 +36,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setTitle("");
         setAdapter();
         setOnClickListeners();
     }
 
+    /** Update the adapter when a new entry is added. */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         setAdapter();
     }
 
+    /** Set the onclicklistener for the ListView, when an entry is clicked, start the detail
+     * activity and pass it the entry just clicked on. */
     private class EntryClickListener implements ListView.OnItemClickListener {
 
         @Override
@@ -62,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /** Set onlongclick listener for the ListView, when an entry is long clicked, remove it
+     * from the database and reset the adapter. */
     private class EntryLongClickListener implements ListView.OnItemLongClickListener {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

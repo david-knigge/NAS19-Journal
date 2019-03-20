@@ -12,9 +12,11 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        setTitle("");
         renderDetails((JournalEntry) getIntent().getSerializableExtra("entry"));
     }
 
+    /** Fill the details of a journal entry, set the correct mood picture. */
     public void renderDetails(JournalEntry entry) {
         TextView title = findViewById(R.id.detailTitle);
         TextView content = findViewById(R.id.detailContent);

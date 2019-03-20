@@ -13,6 +13,7 @@ public class EntryAdapter extends ResourceCursorAdapter {
         super(context, R.layout.row_entry, cursor, 0);
     }
 
+    /** Set details of a journal entry, set the correct mood picture. */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView title = view.findViewById(R.id.rowTitle);

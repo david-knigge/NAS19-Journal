@@ -5,9 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import java.util.Map;
 
 public class EntryDatabase extends SQLiteOpenHelper {
 
@@ -26,6 +23,7 @@ public class EntryDatabase extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    /** create journal entries table if it does not exist. */
     @Override
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_ENTRIES_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
